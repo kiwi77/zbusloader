@@ -5,7 +5,7 @@ import binascii
 import optparse
 
 #pagesize = 64 # suitable for atmega8
-pagesize = 128 # suitable for atmega8
+pagesize = 128 # suitable for atmega169
 
 
 parser = optparse.OptionParser()
@@ -15,6 +15,9 @@ parser.add_option("-H", "--host", dest = "host",
 parser.add_option("-f", "--file", dest = "file",
                   default = 'ethersex.bin',
                   help = "binary data to flash")
+parser.add_option("-t", "--timeout", type="int", dest = "timeout",
+                  default = 99,
+                  help = "timeout to exit without answer from device")
 
 (options, args) = parser.parse_args()
 
@@ -72,11 +75,19 @@ chunkno = 0
 chunk = handle.read (pagesize)
 chunklen = len (chunk)
 
+counting = 0
+print "Timeout=%d" % (options.timeout)
+
 while 1:
     while len (chunk) < pagesize:
         chunk = chunk + "\377"
 
     print "%02x (%02x): " % (chunkno, chunklen)
+
+    counting += 1
+
+    if counting >= options.timeout :
+        sys.exit(1)
 
     ## calculate 8-bit crc ...
     sendchunk = chunk + chr (crc_calc (chunk))
