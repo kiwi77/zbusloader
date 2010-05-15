@@ -1,12 +1,11 @@
-#! /usr/bin/python
+#!/usr/bin/python
+#
+#
+
 import socket
 import sys
 import binascii
 import optparse
-
-#pagesize = 64 # suitable for atmega8
-pagesize = 128 # suitable for atmega169
-
 
 parser = optparse.OptionParser()
 parser.add_option("-H", "--host", dest = "host",
@@ -18,6 +17,9 @@ parser.add_option("-f", "--file", dest = "file",
 parser.add_option("-t", "--timeout", type="int", dest = "timeout",
                   default = 99,
                   help = "timeout to exit without answer from device")
+parser.add_option("-p", "--pagesize", type="int", dest = "pagesize",
+                  default = 64,
+                  help = "Set the Pagesize for the chip, 64 @ mega8 || 128 | mega169")
 
 (options, args) = parser.parse_args()
 
@@ -64,7 +66,7 @@ def crc_update (crc, data):
 def crc_calc(data):
     crc = 0
 
-    for i in range (pagesize):
+    for i in range (options.pagesize):
         crc = crc_update (crc, ord (data[i]))
     return crc
 
@@ -72,21 +74,22 @@ def crc_calc(data):
 
 chunkno = 0
 
-chunk = handle.read (pagesize)
+chunk = handle.read (options.pagesize)
 chunklen = len (chunk)
 
 counting = 0
-print "Timeout=%d" % (options.timeout)
+#print "Timeout=%d" % (options.timeout)
+#print "Pagesize=%d" % (options.pagesize)
 
 while 1:
-    while len (chunk) < pagesize:
+    while len (chunk) < options.pagesize :
         chunk = chunk + "\377"
 
     print "%02x (%02x): " % (chunkno, chunklen)
 
     counting += 1
 
-    if counting >= options.timeout :
+    if counting >= options.timeout:
         sys.exit(1)
 
     ## calculate 8-bit crc ...
@@ -118,13 +121,13 @@ while 1:
         counting = 0
         continue
 
-    if chunklen < pagesize:
+    if chunklen < options.pagesize:
         break
 
     ## prepare to send next byte ...
     chunkno += 1
     counting = 0
-    chunk = handle.read (pagesize)
+    chunk = handle.read (options.pagesize)
     chunklen = len (chunk)
 
 while 1:
