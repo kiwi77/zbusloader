@@ -19,7 +19,7 @@ parser.add_option("-t", "--timeout", type="int", dest = "timeout",
                   help = "timeout to exit without answer from device")
 parser.add_option("-p", "--pagesize", type="int", dest = "pagesize",
                   default = 64,
-                  help = "Set the Pagesize for the chip, 64 @ mega8 || 128 | mega169")
+                  help = "Set the Pagesize for the chip, 64 @ mega8 || 128 @ mega169")
 
 (options, args) = parser.parse_args()
 
