@@ -88,6 +88,10 @@ while 1:
     ## recv reply
     try:
         reply = s.recv (2)
+
+    except KeyboardInterrupt:
+        sys.exit(0)
+
     except:
         reply = ""
 
