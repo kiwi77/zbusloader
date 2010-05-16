@@ -78,8 +78,8 @@ chunk = handle.read (options.pagesize)
 chunklen = len (chunk)
 
 counting = 0
-#print "Timeout=%d" % (options.timeout)
-#print "Pagesize=%d" % (options.pagesize)
+print "Timeout=%d" % (options.timeout)
+print "Pagesize=%d" % (options.pagesize)
 
 while 1:
     while len (chunk) < options.pagesize :
@@ -110,7 +110,6 @@ while 1:
         reply = ""
 
     if len (reply) != 2:
-        counting = 0
         continue
 
     if ord (reply[0]) != 0x23:
